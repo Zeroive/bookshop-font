@@ -92,8 +92,24 @@ export default {
   },
   methods:{
     onSubmit(){
-      this.$toast.success('注册成功')
-
+      
+      request({
+        method: "post",
+        url: "/user/register",
+        data:{
+          userName: this.userInfo.username,
+          password: this.userInfo.password,
+          email: this.userInfo.email
+        }
+      }).then(res => {
+          if(res.code == 200){
+            this.$router.push('/login')
+            this.$toast.success('注册成功！')
+          }else{
+            this.$toast.fail(res.msg)
+          }
+        }
+      )
     },
     toLogin(){
       this.$router.push('/')
