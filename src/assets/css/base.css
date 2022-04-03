@@ -1,0 +1,43 @@
+/*定义样式变量*/
+@import "normalize.css";
+@import "iconfont.css";
+:root{
+    --color-text:#666666;  /*文本颜色*/
+    --color-high-text:#42bBaa; /*文本高亮*/
+    --color-tint:#42b983;/*激活的颜色*/
+    --color-background:#FFFFFF;/*背景颜色*/
+    --font-size:14px;/*字体大小*/
+    --line-height:1.5;/*行高*/
+}
+/*主体*/
+body{
+    background: var(--color-background);/*使用背景颜色变量设置背景颜色*/
+    color: var(--color-text);/*前景颜色*/
+    width: 100vw;/*100vw表示占整个设备的宽度*/
+    user-select: none;/*禁止用户选中页面文本或图片进行复制*/
+}
+
+/*所有元素的初始样式*/
+*::before,*::after{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+a{
+    color: var(--color-text);
+    text-decoration: none;/*取消下划线*/
+}
+
+.left{
+    float:left
+}
+
+.right{
+    float:right;
+}
+
+img{
+    max-width: 100% !important;
+    height: auto !important;
+}
