@@ -1,6 +1,6 @@
 <template>
   <div>
-    <navbar-component v-slot:default>商品分类</navbar-component>
+    <navbar-component>商品分类</navbar-component>
     <div id="main-box">
       <!--     tab选择卡-->
       <div class="order-tab">
@@ -21,6 +21,7 @@
       <!--  商品列表    -->
       <div class="goods-list">
         <van-card
+            v-for="index in 4" :key="index"
             num="20"
             price="32.00"
             desc="这里是商品的描述信息"
@@ -36,64 +37,21 @@
             <van-button size="mini" color="#ff0000">购买</van-button>
           </template>
         </van-card>
-        <van-card
-            num="20"
-            price="32.00"
-            desc="这里是商品的描述信息"
-            title="细说PHP"
-            thumb="https://img.yzcdn.cn/vant/ipad.jpeg"
-            @click="goDetail(2)"
-        >
-          <template #tags>
-            <van-tag plain type="danger">新品</van-tag>
-          </template>
-          <template #footer>
-            <van-button size="mini" color="#ffBc00" @click.stop="handlerAddCart">加入购物车</van-button>
-            <van-button size="mini" color="#ff0000">购买</van-button>
-          </template>
-        </van-card>
-        <van-card
-            num="20"
-            price="32.00"
-            desc="这里是商品的描述信息"
-            title="细说PHP"
-            thumb="https://img.yzcdn.cn/vant/ipad.jpeg"
-            @click="goDetail(3)">
-          <template #tags>
-            <van-tag plain type="danger">新品</van-tag>
-          </template>
-          <template #footer>
-            <van-button size="mini" color="#ffBc00" @click.stop="handlerAddCart">加入购物车</van-button>
-            <van-button size="mini" color="#ff0000">购买</van-button>
-          </template>
-        </van-card>
-        <van-card
-            num="20"
-            price="32.00"
-            desc="这里是商品的描述信息"
-            title="细说PHP"
-            thumb="https://img.yzcdn.cn/vant/ipad.jpeg"
-            @click="goDetail(4)">
-          <template #tags>
-            <van-tag plain type="danger">新品</van-tag>
-          </template>
-          <template #footer>
-            <van-button size="mini" color="#ffBc00" @click.stop="handlerAddCart">加入购物车</van-button>
-            <van-button size="mini" color="#ff0000">购买</van-button>
-          </template>
-        </van-card>
       </div>
     </div>
+    <TabBar></TabBar>
   </div>
 </template>
 
 <script>
 import NavbarComponent from "@/components/navbar/NavbarComponent";
+import TabBar from "@/components/common/TabBar.vue"
 
 export default {
   name: "CategoryView",
   components:{
-    NavbarComponent
+    NavbarComponent,
+    TabBar
   },
   data(){
     return{
@@ -139,7 +97,7 @@ export default {
   .left-menu{
     position: fixed;
     left: 0px;
-    width: 130px;
+    width: 80px;
     top: 95px;
     .sidebar{
       width: 100%;
@@ -150,7 +108,7 @@ export default {
     flex: 1;
     position: absolute;
     top: 100px;
-    left: 130px;
+    left: 80px;
     right: 0px;
     height: 100vh;
     padding: 10px;

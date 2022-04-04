@@ -51,6 +51,8 @@
       </van-row>
       <good-list></good-list>
     </div>
+
+    <TabBar></TabBar>
   </div>
 </template>
 
@@ -59,6 +61,7 @@ import NavbarComponent from "@/components/navbar/NavbarComponent";
 import Icon from "@/components/common/Icon";
 import DetailView from "@/views/detail/DetailView";
 import GoodList from "@/components/content/goods/GoodList";
+import TabBar from "@/components/common/TabBar.vue";
 
 export default {
   name: "ProfileView",
@@ -153,7 +156,8 @@ export default {
     GoodList,
     DetailView,
     Icon,
-    NavbarComponent
+    NavbarComponent,
+    TabBar
   }
 }
 </script>

@@ -2,32 +2,38 @@ import { createStore } from 'vuex'
 
 export default createStore({
   state: {
-    cartCount:0,
-    identity:'',
-    username:'',
+    identity:'user',
+    user:{
+      userName:'',
+      userId: 104
+    },
+    cart: {
+      goodlist: [],
+      count: 0
+    }
   },
   getters: {
 
   },
   mutations: {
     addCarCount(state,payload){
-      state.cartCount += payload.count
+      state.cart.count += payload.count
     },
     addIdentity(state){
       state.identity = 'user'
     },
-    updateUserName(state, username){
-      state.username = username
+    updateUserName(state, userInfo){
+      state.user = userInfo
     }
   },
   actions: {
-      updateCarCount(context){
-        context.commit('addCarCount',{count:1})
-      },
-      Login(context,username){
-        context.commit('addIdentity')
-        context.commit('updateUserName',username)
-      }
+    updateCarCount(context){
+      context.commit('addCarCount',{count:1})
+    },
+    Login(context,userInfo){
+      context.commit('addIdentity')
+      context.commit('updateUserName',userInfo)
+    }
   }
   ,
   modules: {

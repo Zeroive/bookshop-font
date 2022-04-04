@@ -60,9 +60,9 @@ export default {
         }
       }).then(res => {
         if(res.code == 200){
-          this.$store.dispatch('Login',this.userInfo.username)
+          this.$store.dispatch('Login',res.data)
           this.$router.push('/home')
-          this.$toast.success('欢迎你'+this.userInfo.username)
+          this.$toast.success('欢迎你'+this.$store.state.user.userName)
         }else{
           this.$toast.fail(res.msg)
         }

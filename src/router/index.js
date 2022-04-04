@@ -19,7 +19,15 @@ const routes = [
       identities:['','user']
     }
   },
-
+  {
+    path: '/address',
+    name: 'address',
+    component:()=>import('../views/address/address'),
+    meta:{
+      title:'地址管理',
+      identities:['','user']
+    }
+  },
   {
     path:'/home',
     name:'home',
@@ -74,8 +82,10 @@ const router = createRouter({
 router.beforeEach((to,from,next)=>{
   if (!to.meta.identities.includes(store.state.identity)){
     next({path:'/'})
+
+  }else{
+    document.title = to.meta.title
+    next()
   }
-  document.title = to.meta.title
-  next()
 })
 export default router
