@@ -9,7 +9,8 @@
       :immediate-check="false"
     >
     <div class="goods-list">
-      <GoodsItem v-for="(item, index) in goodlist" :key="index" :item="item"></GoodsItem>
+      <GoodsItem v-for="(item, index) in goodlist" :key="index" :item="item"
+       @click="goDetail(item.id)" ></GoodsItem>
     </div>
   </van-list>
 </template>
@@ -45,6 +46,14 @@ export default {
       this.pageNum += 1
       this.getGoodList()
     },
+    goDetail(id){
+      this.$router.push({
+        path:'/detail',
+        query:{
+          id:id
+        }
+      })
+    },
     getGoodList(){
       request({
         url:"/goods/page",
@@ -56,13 +65,12 @@ export default {
       }).then(res=>{
         if(res.records != null){
           this.goodlist = [...this.goodlist, ...res.records.map(val=>{return{
-            "id":val.goodsId,
+            "id":val.id,
             "number":val.number,
             "title":val.name,
             "price":val.price,
             "tags":[],
-            "thumb":val.imgUrl,
-            "goodsId": val.goodsId
+            "thumb":val.imgUrl
           }})]
           this.loading = false
           if(this.pageNum*this.pageSize >= res.total){
@@ -97,4 +105,6 @@ export default {
   margin: 0px 5px 0px 5px;
   border-radius: 5px;
 }
+
+
 </style>

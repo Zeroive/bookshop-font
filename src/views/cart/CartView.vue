@@ -244,6 +244,7 @@ export default {
 
 .good-list{
   margin-top: 45px;
+  margin-bottom: 120px;
 
   .van-swipe-cell{
 

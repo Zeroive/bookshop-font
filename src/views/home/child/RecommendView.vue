@@ -35,7 +35,7 @@ export default {
       this.$router.push({
         path:'/detail',
         query:{
-          id:id
+          id:2
         }
       })
     }
