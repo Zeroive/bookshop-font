@@ -9,20 +9,15 @@
       :immediate-check="false"
     >
     <div class="goods-list">
-      <GoodsItem>{{tabIndex}}</GoodsItem>
-      <GoodsItem>{{tabIndex}}</GoodsItem>
-      <GoodsItem>{{tabIndex}}</GoodsItem>
-      <GoodsItem>{{tabIndex}}</GoodsItem>
-      <GoodsItem>{{tabIndex}}</GoodsItem>
-      <GoodsItem>{{tabIndex}}</GoodsItem>
-      <GoodsItem>{{tabIndex}}</GoodsItem>
-      <GoodsItem>{{tabIndex}}</GoodsItem>
+      <GoodsItem v-for="(item, index) in goodlist" :key="index" :item="item"></GoodsItem>
     </div>
   </van-list>
 </template>
 
 <script>
 import GoodsItem from "@/components/content/goods/GoodsItem";
+import request from '@/network/request'
+
 export default {
   name: "GoodList",
   props:{
@@ -36,7 +31,10 @@ export default {
   data(){
     return{
       loading: false,
-      finished: false
+      finished: false,
+      pageNum: 1,
+      pageSize: 10,
+      goodlist : []
     }
   },
   components:{
@@ -44,10 +42,43 @@ export default {
   },
   methods:{
     onLoad(){
-      console.log("在加载了,在加载了!");
-      // this.loading = false
-      // this.finished = true
+      this.pageNum += 1
+      this.getGoodList()
+    },
+    getGoodList(){
+      request({
+        url:"/goods/page",
+        method:"get",
+        params:{
+          pageNum: this.pageNum,
+          pageSize: this.pageSize
+        }
+      }).then(res=>{
+        if(res.records != null){
+          this.goodlist = [...this.goodlist, ...res.records.map(val=>{return{
+            "id":val.goodsId,
+            "number":val.number,
+            "title":val.name,
+            "price":val.price,
+            "tags":[],
+            "thumb":val.imgUrl,
+            "goodsId": val.goodsId
+          }})]
+          this.loading = false
+          if(this.pageNum*this.pageSize >= res.total){
+            this.finished = true
+          }
+        }
+      }).catch(error=>{
+        console.log(error);
+        this.loading = false
+        this.finished = true
+      })
     }
+    
+  },
+  mounted(){
+    this.getGoodList()
   }
 }
 </script>

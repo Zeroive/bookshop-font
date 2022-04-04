@@ -1,8 +1,8 @@
 <template>
   <Navbar>我的订单</Navbar>
   <div class="good-list">
-    <van-swipe-cell v-for="item in goodlist" :key="item.id">
-        <van-card centered>
+    <van-swipe-cell>
+        <van-card centered v-for="item in goodlist" :key="item.id">
           <template #thumb>
             <img :src="item.thumb" alt="">
           </template>

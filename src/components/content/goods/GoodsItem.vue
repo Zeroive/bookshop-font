@@ -1,17 +1,23 @@
 <template>
   <div class="goods-item">
-    <img src="@/assets/images/recommend1.png">
+    <img :src="item.thumb">
     <div class="goods-info">
-      <p>细说PHP<slot></slot></p>
-      <span class="price"><small>￥</small>32.00</span>
-      <span class="collect"><img src="@/assets/images/collect.png">3</span>
+      <p>{{item.title}}<slot></slot></p>
+      <span class="price"><small>￥</small>{{item.price.toFixed(2)}}</span>
+      <span class="collect"><van-icon name="star-o" /> 3</span>
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: "GoodsItem"
+  name: "GoodsItem",
+  props:{
+    item:{
+      type: Object,
+      require: true
+    }
+  }
 }
 </script>
 
