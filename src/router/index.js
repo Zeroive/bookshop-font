@@ -73,6 +73,15 @@ const routes = [
       identities:['user']
     }
   },
+  {
+    path:'/myorder',
+    name:'myorder',
+    component:()=>import('../views/myOrder/myOrder.vue'),
+    meta:{
+      title:'我的订单',
+      identities:['user']
+    }
+  }
 ]
 
 const router = createRouter({

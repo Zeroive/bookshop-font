@@ -13,19 +13,24 @@
       <van-cell class="top-bar">
         <template #value >
           <van-icon name="location-o" style="margin-right: 3px"/>
-          <span @click="popup" class="address-edit">配送至：{{address_list[current_address_index].title}}</span>
+          <span @click="popup" class="address-edit">配送至：{{addressList[current_address_index].address}}</span>
         </template>
       </van-cell>
 
       <van-swipe-cell v-for="item in goodlist" :key="item.id">
 
         <van-card
-          :price="Number(item.price*item.num).toFixed(2)"
+          :price="Number(item.price*item.number).toFixed(2)"
           :desc="item.desc"
-          :title="item.title"
         >
+          <template #title>
+            <div class="Mtitle">
+              {{item.title}}
+            </div>
+          </template>
+
           <template #num>
-            <van-stepper @plus="setChoosed(item.id)" v-model="item.num" theme="round" button-size="22" disable-input />
+            <van-stepper @plus="setChoosed(item.id)" v-model="item.number" theme="round" button-size="22" disable-input />
           </template>
 
           <template #thumb>
@@ -45,6 +50,8 @@
           <van-button square text="删除" type="danger" class="delete-button" @click="deleteGood(item.id)" />
         </template>
 
+        <van-divider />
+
       </van-swipe-cell>
 
     </div>
@@ -53,6 +60,7 @@
       <van-checkbox v-model="isCheckedAll" checked-color="#ee0a24">全选</van-checkbox>
     </van-submit-bar>
 
+    <!--  -->
     <van-popup
         position="bottom"
         round
@@ -63,7 +71,7 @@
         <div class="popup-main-box">
           <div>配送至</div>
           <van-list>
-            <van-cell @click="change_address(index)" v-for="(item,index) in address_list" :title="item.title" :label="item.label" :key="index">
+            <van-cell @click="change_address(index)" v-for="(item,index) in addressList" :title="item.address" :label="item.label" :key="index">
               <template #icon>
                 <van-icon name="success" color="red" size="20px" v-if="current_address_index == index"></van-icon>
                 <van-icon name="location-o"  size="20px" v-else></van-icon>
@@ -83,6 +91,8 @@
 <script>
 import Navbar from "@/components/navbar/NavbarComponent"
 import TabBar from "@/components/common/TabBar.vue"
+import request from '@/network/request';
+import addressTools from "@/utils/addressTools"
 
 export default {
   name: "Cart",
@@ -90,18 +100,10 @@ export default {
     return{
       checkedAll: false,
       goodlist:[],
-      buttonFlag: true,
+      buttonFlag: true,//true是提交订单，false是删除
       current_address_index:0,
       isShow: false,
-      address_list:[
-        {
-          title:"淮安软件园",
-          label:"江苏省淮安市清江浦区黄码镇",
-        },{
-          title:"徐州工程学院",
-          label:"江苏省徐州市云龙区大龙湖街道",
-        }
-      ],
+      addressList:[{"address":""}],
     }
   },
   components:{
@@ -110,12 +112,24 @@ export default {
   },
   methods:{
     onSubmit(){
-      if(this.buttonFlag)
-        this.$toast.success("下单成功")
+      if(this.buttonFlag){
+        for(let item of this.goodlist){
+          if(item.checked){
+            this.submitOrder({
+              "userId": this.$store.state.user.userId,
+              "goodsId": item.goodsId,
+              "addressId": this.addressList[this.current_address_index].id,
+              "number": item.number,
+              "totalPrice": item.number*item.price,
+              "status": 1
+            })
+          }
+        }
+      }
       else{
         for(let i = this.goodlist.length-1; i >= 0; i--){
           if(this.goodlist[i].checked){
-            this.goodlist.splice(i, 1)
+            console.log(this.goodlist.splice(i, 1))
           }
       }
       }
@@ -137,11 +151,23 @@ export default {
     change_address(index){
       this.current_address_index = index
       this.isShow = false
+    },
+    submitOrder(data){
+      request({
+        url: "/order/buy",
+        method: "post",
+        data: data
+      }).then(res=>{
+        if(res.code == 200)
+          this.$toast.success("下单成功!")
+      }).catch(error=>{
+        console.log(error);
+      })
     }
   },
   computed:{
     totalPrice(){
-      return this.goodlist.reduce((pre, cur)=>pre+(cur.checked?(cur.num*cur.price):0),0)*100
+      return this.goodlist.reduce((pre, cur)=>pre+(cur.checked?(cur.number*cur.price):0),0)*100
     },
     isCheckedAll:{
       get(){
@@ -166,7 +192,42 @@ export default {
     }
   },
   mounted(){
-    this.goodlist = this.$store.state.cart.goodlist
+    request({
+      url: "/shoppingCart/all",
+      method: "post",
+      data:{
+        userId: this.$store.state.user.userId
+      }
+    }).then(res=>{
+      this.goodlist = res.data.map(val=>{return{
+        "id":val.goodsId,
+        "number":val.number,
+        "title":val.name,
+        "checked":false,
+        "price":val.price,
+        "tags":[],
+        "thumb":val.imgUrl,
+        "goodsId": val.goodsId
+      }})
+    }).catch(error=>{
+      console.log(error);
+    })
+
+    this.addressTools = addressTools
+    request({
+      url:"/address/all",
+      method:"post",
+      data:{
+        userId: this.$store.state.user.userId
+      }
+    }).then(res=>{
+      this.addressList = addressTools.dbAddress_to_vantAddress(res.data).map(val=>{
+          val["label"] = addressTools.areaCode_to_address(val.areaCode)
+          return val
+        })
+    }).catch(error=>{
+      console.log(error);
+    })
   }
 }
 </script>
@@ -185,7 +246,14 @@ export default {
   margin-top: 45px;
 
   .van-swipe-cell{
-    margin-top: 10px;
+
+  }
+
+  .Mtitle{
+    width: 150px;
+    font-weight: bold;
+    font-size: 14px;
+    transform: translate(50%);
   }
 
   .van-checkbox{
@@ -201,6 +269,9 @@ export default {
   .van-card{
     border-radius: 10px;
     margin: 0 10px 0 10px;
+    background-color: white;
+    // border: 0.1px solid #666;
+    
   }
 }
 

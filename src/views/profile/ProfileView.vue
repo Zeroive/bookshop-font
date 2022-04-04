@@ -31,7 +31,7 @@
         </van-row>
         <van-row  justify="space-around">
           <Icon v-for="(item,index) in order_icons"
-                :icon="item" :key="index"
+                :icon="item" :key="index" @click="pageTo(item.path)"
           />
         </van-row>
       </div>
@@ -99,6 +99,7 @@ export default {
           icon_msg: "我的订单",
           icon_color:"#fd6d6d",
           icon_size: 28,
+          path: "/myorder"
         }
       ],
       shop_icons:[
@@ -151,6 +152,11 @@ export default {
   mounted() {
     this.userInfo.username = this.$store.state.username
     this.userInfo.email = '123123123@qq.com'
+  },
+  methods:{
+    pageTo(path){
+      this.$router.push({path:path})
+    }
   },
   components:{
     GoodList,
