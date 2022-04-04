@@ -1,67 +1,69 @@
 <template>
   <div>
-    <navbar-component v-slot:default>商品详情:{{$route.query.id}}</navbar-component>
-    <img :src="src">
-    <div class="goods-list">
-      <van-card
-          class="vant-card"
-          :num="num"
-          :price="price"
-          :desc="desc"
-          :title="title"
+    <navbar-component>商品详情:{{$route.query.id}}</navbar-component>
+    <img :src="src" alt="">
+    <van-card
+        num="2"
+        price="2.00"
+        desc="描述信息"
+        title="商品标题"
       >
         <template #tags>
-          <van-tag plain type="danger" v-for="(item,index) in tags" :key="index">{{item}}</van-tag>
+          <van-tag plain type="danger">新品上市</van-tag>
         </template>
-        <template #footer>
-          <van-button size="mini" color="#ffBc00" @click="handlerAddCart">加入购物车</van-button>
+        <!-- <template #footer>
+          <van-button size="mini" color="#ff8c00" @click="handleAddCart()">加入购物车</van-button>
           <van-button size="mini" color="#ff0000">购买</van-button>
-        </template>
-      </van-card>
-    </div>
+        </template> -->
+    </van-card>
+
+    <van-action-bar>
+      <van-action-bar-icon icon="chat-o" text="客服" @click="onClickIcon" />
+      <van-action-bar-icon icon="cart-o" text="购物车" @click="onClickIcon" :badge='this.$store.state.cartCount' />
+      <van-action-bar-icon icon="shop-o" text="店铺" @click="onClickIcon" />
+      <van-action-bar-button color="#5FB878" type="warning" text="加入购物车" />
+      <van-action-bar-button color="#009688" type="danger" text="立即购买" />
+    </van-action-bar>
+    
+    <TabBar></TabBar>
   </div>
 </template>
 
 <script>
 import NavbarComponent from "@/components/navbar/NavbarComponent";
+import TabBar from "@/components/common/TabBar.vue"
 
 export default {
   name: "DetailView",
   components:{
-    NavbarComponent
+    NavbarComponent,
+    TabBar
   },
   data(){
     return{
-      src:'',
-      num:0,
-      price:0,
-      title:"",
-      desc:"",
-      tags:[],
+      src:''
     }
-  },
-  mounted() {
-    setTimeout(()=>{
-      this.src = '/img/swipe1.704ba92b.jpg '
-      this.price = 32.00
-      this.num = 20
-      this.desc = "这里是详细描述"
-      this.title =  "细说PHP"
-      this.tags = ['新品','推荐']
-    },1000)
   },
   methods:{
-    handlerAddCart(){
-      this.$store.dispatch('updateCarCount')
+    handleAddCart(){
+      this.$store.dispatch('updateCartCount')
       this.$toast.success("添加成功")
     }
+  },
+  mounted(){
+    this.src = 'swipe1.jpg'
   }
 }
 </script>
 
 <style scoped lang="scss">
-.vant-card{
+.van-card{
   text-align: left;
-  font-size: var(--font-size);
+  font-size: var(--font-size)
 }
+
+.van-action-bar{
+  margin-bottom: 50px;
+}
+
 </style>
