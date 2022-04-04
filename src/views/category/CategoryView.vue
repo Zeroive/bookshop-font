@@ -87,7 +87,7 @@ export default {
     position: fixed;
     top: 45px;
     right: 0;
-    left: 130px;
+    left: 80px;
     z-index: 9;
     .tab-bar{
       height: 100%;
