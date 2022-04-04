@@ -124,7 +124,7 @@ export default {
       url:"/address/all",
       method:"post",
       data:{
-        userId: '104'
+        userId: this.$store.state.user.userId
       }
     }).then(res=>{
       this.addressList = addressTools.dbAddress_to_vantAddress(res.data)

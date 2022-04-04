@@ -1,3 +1,5 @@
+import areaList from "@/assets/data/areaList.json"
+
 function vantAddress_to_dbAddress(addressId, userId, item){
   return addressId==-1?
   {
@@ -34,7 +36,17 @@ function dbAddress_to_vantAddress(item){
   }})
 }
 
-export default{vantAddress_to_dbAddress, dbAddress_to_vantAddress}
+function areaCode_to_address(code){
+  if(typeof(code) == "string")
+    code = parseInt(code)
+  const province = areaList["province_list"][(parseInt(code/10000)*10000).toString()]
+  const city = areaList["city_list"][(parseInt(code/100)*100).toString()]
+  const county = areaList["county_list"][code.toString()]
+  // console.log(province==null?"":province + city==null?"":city + county==null?"":county);
+  return province==null?"":province + city==null?"":city + county==null?"":county
+}
+
+export default{vantAddress_to_dbAddress, dbAddress_to_vantAddress, areaCode_to_address}
 
 
 
