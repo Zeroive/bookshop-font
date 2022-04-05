@@ -173,7 +173,7 @@ export default {
         method: "post",
         data: data
       }).then(res=>{
-        if(res.code == 200){
+        if(res != null && res.code == 200){
           if(func != null)
             func(res.data)
         }

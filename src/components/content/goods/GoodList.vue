@@ -1,18 +1,21 @@
 <template>
-  <van-list
-      v-model:loading="loading"
-      :finished="finished"
-      finished-text="没有更多了"
-      loading-text="加载中"
-      @load="onLoad"
-      :offset="50"
-      :immediate-check="false"
-    >
-    <div class="goods-list">
-      <GoodsItem v-for="(item, index) in goodlist" :key="index" :item="item"
-       @click="goDetail(item.id)" ></GoodsItem>
-    </div>
-  </van-list>
+  <van-skeleton class="Mskeleton"  v-show="!loadfinished" :row="9" />
+  <div v-show="loadfinished">
+    <van-list
+        v-model:loading="loading"
+        :finished="finished"
+        finished-text="没有更多了"
+        loading-text="加载中"
+        @load="onLoad"
+        :offset="50"
+        :immediate-check="false"
+      >
+      <div class="goods-list">
+        <GoodsItem v-for="(item, index) in goodlist" :key="index" :item="item"
+        @click="goDetail(item.id)" ></GoodsItem>
+      </div>
+    </van-list>
+  </div>
 </template>
 
 <script>
@@ -31,6 +34,7 @@ export default {
   },
   data(){
     return{
+      loadfinished: false,
       loading: false,
       finished: false,
       pageNum: 1,
@@ -63,7 +67,7 @@ export default {
           pageSize: this.pageSize
         }
       }).then(res=>{
-        if(res.records != null){
+        if(res != null && res.records != null){
           this.goodlist = [...this.goodlist, ...res.records.map(val=>{return{
             "id":val.id,
             "number":val.number,
@@ -72,6 +76,7 @@ export default {
             "tags":[],
             "thumb":val.imgUrl
           }})]
+          this.loadfinished = true
           this.loading = false
           if(this.pageNum*this.pageSize >= res.total){
             this.finished = true
@@ -104,6 +109,10 @@ export default {
   justify-content: space-around;
   margin: 0px 5px 0px 5px;
   border-radius: 5px;
+}
+
+.Mskeleton{
+  margin-top: 20px;
 }
 
 

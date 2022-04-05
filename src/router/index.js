@@ -81,6 +81,15 @@ const routes = [
       title:'我的订单',
       identities:['user']
     }
+  },
+  {
+    path:'/collection',
+    name:'collection',
+    component:()=>import('../views/collection/collection.vue'),
+    meta:{
+      title:'我的收藏',
+      identities:['user']
+    }
   }
 ]
 
