@@ -1,35 +1,39 @@
 <template>
+  
   <div>
-    <navbar-component>商品详情{{$route.query.id}}</navbar-component>
-    <img :src="item.imgUrl" alt="">
-    <van-card class="Mcard">
-      <template #price>
-        <small>￥</small>
-        <span class="Mprice">
-          {{item.price}}
-        </span>
-      </template>
-      <template #title>
-        <div class="Mtitle">
-          {{item.name}}
-        </div>
-      </template>
-      <template #tags>
-        <van-tag plain type="danger">新品上市</van-tag>
-      </template>
-      <template #footer>
-        <van-stepper v-model="number" theme="round" button-size="22" disable-input />
-      </template>
-    </van-card>
-    <div class="Minfo">{{item.info}}</div>
+    <navbar-component>商品详情</navbar-component>
+    <van-skeleton class="Mskeleton"  v-show="!loadfinished" title :row="9"   />
+    <div v-show="loadfinished">
+      <img :src="item.imgUrl" alt="">
+      <van-card class="Mcard">
+        <template #price>
+          <small>￥</small>
+          <span class="Mprice">
+            {{item.price}}
+          </span>
+        </template>
+        <template #title>
+          <div class="Mtitle">
+            {{item.name}}
+          </div>
+        </template>
+        <template #tags>
+          <van-tag plain type="danger">新品上市</van-tag>
+        </template>
+        <template #footer>
+          <van-stepper v-model="number" theme="round" button-size="22" disable-input />
+        </template>
+      </van-card>
+      <div class="Minfo">{{item.info}}</div>
 
-    <van-action-bar>
-      <van-action-bar-icon icon="star-o" text="收藏" @click="onClickStarIcon" />
-      <van-action-bar-icon icon="cart-o" text="购物车" :badge='this.$store.state.cartCount' />
-      <van-action-bar-button color="#5FB878" type="warning" text="加入购物车" @click="addShoppingCart" />
-      <van-action-bar-button color="#009688" type="danger" text="立即购买" />
-    </van-action-bar>
-    
+      <van-action-bar>
+        <van-action-bar-icon icon="star-o" text="收藏" @click="onClickStarIcon" />
+        <van-action-bar-icon icon="cart-o" text="购物车" :badge='this.$store.state.cartCount' />
+        <van-action-bar-button color="#5FB878" type="warning" text="加入购物车" @click="addShoppingCart" />
+        <van-action-bar-button color="#009688" type="danger" text="立即购买" />
+      </van-action-bar>
+
+    </div>
     <TabBar></TabBar>
   </div>
 </template>
@@ -48,7 +52,8 @@ export default {
   data(){
     return{
       number:1,
-      item:{}
+      item:{},
+      loadfinished: false
     }
   },
   methods:{
@@ -82,6 +87,7 @@ export default {
           }else{
             for(let i of keys)
               if(i!=null)this[i] = res.data
+            this.loadfinished = true
           }
         }
       }).catch(error=>{
@@ -96,6 +102,11 @@ export default {
 </script>
 
 <style scoped lang="scss">
+
+.Mskeleton{
+  margin-top: 60px;
+}
+
 .van-card{
   text-align: left;
   font-size: var(--font-size)
