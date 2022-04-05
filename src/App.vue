@@ -50,7 +50,6 @@ export default ({
       value:1,
       thumb: "recommend1.png"
     }]
-    this.$store.state.cart.count = 4
   }
 })
 </script>

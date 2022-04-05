@@ -48,6 +48,7 @@
 
         <template #right>
           <van-button square text="删除" type="danger" class="delete-button" @click="deleteGood(item.id)" />
+          <!-- {{item.id}} -->
         </template>
 
         <van-divider />
@@ -111,6 +112,7 @@ export default {
     TabBar
   },
   methods:{
+    // 批量提交订单、删除
     onSubmit(){
       if(this.buttonFlag){
         for(let item of this.goodlist){
@@ -129,18 +131,25 @@ export default {
       else{
         for(let i = this.goodlist.length-1; i >= 0; i--){
           if(this.goodlist[i].checked){
-            console.log(this.goodlist.splice(i, 1))
+            this.deleteGood(this.goodlist[i].id)
           }
       }
       }
     },
     deleteGood(id){
-      for(let i in this.goodlist){
-        if(id == this.goodlist[i].id){
-          this.goodlist.splice(i, 1)
-          break
-        }
-      }
+      this.getRequest("/shoppingCart/delete", {id: id, userId:this.$store.state.user.userId}, (data)=>{
+        this.$store.state.cart.count = data.length
+        this.goodlist = data.map(val=>{return{
+          "id":val.id,
+          "number":val.number,
+          "title":val.name,
+          "checked":false,
+          "price":val.price,
+          "tags":[],
+          "thumb":val.imgUrl,
+          "goodsId": val.goodsId
+        }})
+      })
     },
     setChoosed(id){
       this.goodlist.map(n=>{if(id==n.id)n.checked=true})
@@ -152,14 +161,22 @@ export default {
       this.current_address_index = index
       this.isShow = false
     },
+    // 提交订单
     submitOrder(data){
+      this.getRequest("/order/buy", data, ()=>{
+        this.$toast.success("下单成功!")
+      })
+    },
+    getRequest(url, data, func=null){
       request({
-        url: "/order/buy",
+        url: url,
         method: "post",
         data: data
       }).then(res=>{
-        if(res.code == 200)
-          this.$toast.success("下单成功!")
+        if(res.code == 200){
+          if(func != null)
+            func(res.data)
+        }
       }).catch(error=>{
         console.log(error);
       })
@@ -192,15 +209,10 @@ export default {
     }
   },
   mounted(){
-    request({
-      url: "/shoppingCart/all",
-      method: "post",
-      data:{
-        userId: this.$store.state.user.userId
-      }
-    }).then(res=>{
-      this.goodlist = res.data.map(val=>{return{
-        "id":val.goodsId,
+    this.getRequest("/shoppingCart/all", {userId: this.$store.state.user.userId}, data=>{
+      this.$store.state.cart.count = data.length
+      this.goodlist = data.map(val=>{return{
+        "id":val.id,
         "number":val.number,
         "title":val.name,
         "checked":false,
@@ -209,24 +221,12 @@ export default {
         "thumb":val.imgUrl,
         "goodsId": val.goodsId
       }})
-    }).catch(error=>{
-      console.log(error);
     })
-
-    this.addressTools = addressTools
-    request({
-      url:"/address/all",
-      method:"post",
-      data:{
-        userId: this.$store.state.user.userId
-      }
-    }).then(res=>{
-      this.addressList = addressTools.dbAddress_to_vantAddress(res.data).map(val=>{
-          val["label"] = addressTools.areaCode_to_address(val.areaCode)
-          return val
-        })
-    }).catch(error=>{
-      console.log(error);
+    this.getRequest("/address/all", {userId: this.$store.state.user.userId}, data=>{
+      this.addressList = addressTools.dbAddress_to_vantAddress(data).map(val=>{
+        val["label"] = addressTools.areaCode_to_address(val.areaCode)
+        return val
+      })
     })
   }
 }

@@ -9,7 +9,7 @@
       <div>分类</div>
     </router-link>
     <router-link  class="tab-bar-item" to="/cart">
-      <van-badge :content="$store.state.cart.count" max="9" :show-zero="false">
+      <van-badge :content="$store.state.cart.count" max="99" :show-zero="false">
         <div class="icon"><i class="iconfont icon-a-gouwuchegouwu"></i></div>
       </van-badge>
       <div>购物车</div>
