@@ -1,16 +1,24 @@
 <template>
+  <!-- 头部 -->
   <Navbar>我的订单</Navbar>
+  <!-- 商品列表 -->
   <div class="good-list">
     <van-swipe-cell>
+      <!-- 商品卡片 -->
         <van-card centered v-for="(item, index) in goodlist" :key="index" @click="goDetail(item.goodsId)">
+          <!-- 商品图片，绑定参数传过来的地址 -->
           <template #thumb>
             <img :src="item.thumb" alt="">
           </template>
+          <!-- 商品标题 -->
           <template #desc>
             <div class="Mtitle">{{item.title}}</div>
           </template>
+          <!-- 商品的操作 -->
           <template #footer>
+            <!-- 删除操作 -->
             <van-button round plain hairline type="primary" size="mini" @click.stop="handleDeleteOrder(item.id)">删除订单</van-button>
+            <!-- 再次购买操作，跳转到下单界面 -->
             <van-button round plain hairline type="primary" size="mini" @click.stop="handleAddOrder(item)">再次购买</van-button>
           </template>
           <template #num>
@@ -48,6 +56,7 @@ export default {
     handleAddOrder(item){
       this.$router.push({path:"/submitorder", query:{goodsId:item.goodsId, number:item.number}})
     },
+    // 删除订单
     handleDeleteOrder(id){
       request({
       url: "/order/cancel",
@@ -74,6 +83,7 @@ export default {
         console.log(error);
       })
     },
+    // 前往商品详情页
     goDetail(id){
       this.$router.push({
         path:'/detail',
@@ -84,6 +94,7 @@ export default {
     },
   },
   mounted(){
+    // 请求所有订单
     request({
       url: "/order/all",
       method: "post",

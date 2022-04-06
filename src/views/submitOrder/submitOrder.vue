@@ -1,7 +1,8 @@
 <template>
   <div>
     <navbar-component>提写订单</navbar-component>
-
+    
+    <!-- 选择地址 -->
     <van-cell size="large" class="Mcontact" @click="showPopup">
       <template #title>
         <div class="Mtitle">
@@ -51,6 +52,7 @@
 
     </van-card>
 
+    <!-- 结算商品 -->
     <van-cell-group class="">
       <van-cell :value="'￥'+totalPrice.toFixed(2)" >
         <template #title>
@@ -106,12 +108,12 @@ export default {
   },
   data(){
     return{
-      chosenAddressId: 0,
-      addressList:[],
-      disabledList:[],
-      isShow: false,
-      item:{},
-      number: 1
+      chosenAddressId: 0, //当前选择地址id
+      addressList:[], //地址列表
+      disabledList:[], //不可选择地址列表
+      isShow: false, //是否展示选择地址弹窗
+      item:{},//商品信息
+      number: 1//商品数量
     }
   },
   methods:{
@@ -129,13 +131,16 @@ export default {
         console.log(error);
       })
     },
+    // 是否展示选择地址弹窗
     showPopup(){
       this.isShow = true
     },
+    // 跟换地址列表
     change_address(index){
       this.chosenAddressId = index
       this.isShow = false
     },
+    // 提交订单
     onSubmit(){
       this.getRequest(
         "/order/buy", 
@@ -152,30 +157,37 @@ export default {
     }
   },
   computed:{
+    // 当前选择的地址
     chosenAddress(){
       let str = ""
       this.addressList.filter(val=>{val.id == this.chosenAddressId?str=val.address:""})
       return str
     },
+    // 当选择收件人信息
     chosenuser(){
       let name = ""
       let phone = ""
       this.addressList.filter(val=>{val.id == this.chosenAddressId?(name=val.name, phone=val.tel):""})
       return name + '  ' + phone.slice(0,3)+'****'+phone.slice(-4)
     },
+    // 总价
     totalPrice(){
       return this.item.price*this.number
     },
+    // 运费
     freightCharge(){
       return 0
     }
   },
   mounted(){
+    // 商品数量
     this.number = this.$route.query.number
+    // 查询商品详细信息
     this.getRequest("/goods/queryGood", {id: this.$route.query.goodsId}, (data)=>{
       this.item = data
       this.loadfinished = true
     })
+    // 选择地址、添加地址后的重新选择的地址
     const chooseAddressId = localStorage.getItem('chosenAddressId')
     this.getRequest("/address/all", {userId: this.$store.state.user.userId}, data=>{
       this.addressList = addressTools.dbAddress_to_vantAddress(data).map((val)=>{

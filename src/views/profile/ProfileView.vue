@@ -1,12 +1,12 @@
 <template>
   <div>
+    <!-- 顶部 -->
     <navbar-component>
       <template #default>我的</template>
-      <template #right >
-          <van-icon name="setting-o" style="margin-right: 3px" />
-      </template>
     </navbar-component>
     <div class="main-box">
+
+      <!-- 用户详情页 -->
       <div id="userInfo">
         <van-cell style="background-color: #F6F6F6" :title="userInfo.username">
           <template #icon>
@@ -23,6 +23,7 @@
         </van-cell>
       </div>
 
+      <!-- 我的地址、我的收藏、我的订单 -->
       <div id="orders">
         <van-row  justify="space-around">
           <div style="font-size: 6px;" v-for="(item,index) in shop_icons" :key="index">
@@ -30,8 +31,7 @@
           </div>
         </van-row>
         <van-row  justify="space-around">
-          <Icon v-for="(item,index) in order_icons"
-                :icon="item" :key="index" @click="pageTo(item.path)"
+          <Icon v-for="(item,index) in order_icons" :icon="item" :key="index" @click="pageTo(item.path)"
           />
         </van-row>
       </div>
@@ -44,13 +44,18 @@
         </van-row>
       </div> -->
 
+      <!-- 重新加载商品列表 -->
       <van-row justify="end">
-        <div class="change">
+        <div class="change" @click="changeGoodsList">
           <van-icon name="replay"/> 换一换
         </div>
       </van-row>
-      <good-list></good-list>
+
+      <good-list ref="goodsList"></good-list>
     </div>
+
+    <!-- 返回顶部 -->
+    <BackTop ref="gotop"></BackTop>
 
     <TabBar></TabBar>
   </div>
@@ -62,6 +67,7 @@ import Icon from "@/components/common/Icon";
 import DetailView from "@/views/detail/DetailView";
 import GoodList from "@/components/content/goods/GoodList";
 import TabBar from "@/components/common/TabBar.vue";
+import BackTop from "@/components/common/BackTop";
 
 export default {
   name: "ProfileView",
@@ -72,6 +78,7 @@ export default {
         email:'',
         src:'https://img.yzcdn.cn/vant/cat.jpeg',
       },
+      // 渲染列表的数据
       order_icons:[
         {
           icon_name:"balance-list-o",
@@ -93,7 +100,7 @@ export default {
         },
         {
           icon_name:"star",
-          icon_msg:"收藏",
+          icon_msg:"我的收藏",
           icon_size: 28,
           icon_color:"rgb(255, 255, 50)",
           path: "/collection"
@@ -154,12 +161,19 @@ export default {
     }
   },
   mounted() {
-    this.userInfo.username = this.$store.state.username
+    // 初始化用户信息
+    this.userInfo.username = this.$store.state.user.nickName
     this.userInfo.email = '123123123@qq.com'
   },
   methods:{
+    // 跳转详情页
     pageTo(path){
-      this.$router.push({path:path})
+      if(path != null)
+        this.$router.push({path:path})
+    },
+    // 换一换
+    changeGoodsList(){
+      this.$refs.goodsList.changeTab()
     }
   },
   components:{
@@ -167,7 +181,8 @@ export default {
     DetailView,
     Icon,
     NavbarComponent,
-    TabBar
+    TabBar,
+    BackTop
   }
 }
 </script>

@@ -1,4 +1,5 @@
 <template>
+<!-- 商品卡片 -->
   <div class="goods-item">
     <img :src="item.thumb">
     <div class="goods-info">

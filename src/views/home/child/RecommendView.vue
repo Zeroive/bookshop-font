@@ -1,4 +1,5 @@
 <template>
+  <!-- 推荐商品 -->
   <div class="recommend">
     <div class="recommendItem">
       <a href="#" @click.prevent="goDetail(1)">

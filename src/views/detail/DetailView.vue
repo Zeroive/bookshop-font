@@ -1,13 +1,16 @@
 <template>
-  
   <div>
+    <!-- 头部 -->
     <navbar-component>商品详情</navbar-component>
 
+    <!-- 骨架条 --><!-- 根据loadfinished来判断是否渲染 -->
     <van-skeleton class="Mskeleton"  v-show="!loadfinished" title :row="9" />
     <div v-show="loadfinished">
-      
+      <!-- 商品图片 -->
       <img :src="item.imgUrl" alt="">
+      <!-- 商品卡片 -->
       <van-card class="Mcard">
+        <!-- 价格 -->
         <template #price>
           <small>￥</small>
           <span class="Mprice">
@@ -23,18 +26,22 @@
           <van-tag plain type="danger">新品上市</van-tag>
         </template>
         <template #footer>
+          <!-- 选择数量 -->
           <van-stepper v-model="number" theme="round" button-size="22" disable-input />
         </template>
       </van-card>
+
+      <!-- 商品推荐内容 -->
       <pre class="Minfo">{{handleInfo(item.info)}}</pre>
 
+      <!-- 收藏、加入购物车、立即购买按钮 -->
       <van-action-bar>
         <van-action-bar-icon color="rgb(245, 245, 33)" :icon="starIcon" text="收藏" @click="onClickStarIcon" />
         <van-action-bar-button color="#5FB878" type="warning" text="加入购物车" @click="handleAddCart" />
         <van-action-bar-button color="#009688" type="danger" text="立即购买" @click="handleAddOrder"/>
       </van-action-bar>
 
-      <van-dialog v-model:show="isAddOrderPopup" show-cancel-button>
+      <!-- <van-dialog v-model:show="isAddOrderPopup" show-cancel-button>
         <template #title>
           <div class="popTitle">
             {{item.title}}
@@ -66,7 +73,7 @@
             </van-collapse-item>
           </van-collapse>
         </template>
-      </van-dialog>
+      </van-dialog> -->
 
 
     </div>
@@ -89,16 +96,16 @@ export default {
   },
   data(){
     return{
-      number:1,
-      item:{},
-      loadfinished: false,
-      isCollect: true,
-      goodsId: 0,
-      collectionId: 0,
+      number: 1, //商品数量
+      item:{}, //商品信息
+      loadfinished: false, //数据是否请求完成
+      isCollect: true, //是否收藏
+      goodsId: 0, //商品id
+      collectionId: 0, //收藏夹id
       addressList: [], //地址列表
       chosenAddressId: 0, //当前选择的地址
-      isAddOrderPopup: false,
-      activeCollapse: []
+      // isAddOrderPopup: false,
+      // activeCollapse: []
     }
   },
   methods:{
@@ -136,11 +143,13 @@ export default {
           "number":this.number,
           "price":this.item.price
       }
+      this.$store.state.cart.count += 1
       this.getRequest("/shoppingCart/add", data, ()=>{this.$toast.success("添加成功")})
     },
     // 立即购买
     handleAddOrder(){
       this.isAddOrderPopup = false
+      // 跳转到下单页面
       this.$router.push({path:"/submitorder", query:{goodsId:this.goodsId, number:this.number}})
     },
     // 获取请求
@@ -158,19 +167,20 @@ export default {
       })
     },
     handleInfo(str){
-      // 处理字符串 。后面加 \n
+      // 处理商品推荐文字 字符串 。后面加 \n
       if(str != null)
         return str.split('').map((val, index)=>{return val=='。'&&str.charAt(index+1)!='\n'?'。\n':val}).join('')
       return ''
     },
-    addressIcon(id){
-      return this.chosenAddressId == id ? "success" : "location-o"
-    },
-    addressColor(id){
-      return this.chosenAddressId == id ? "red" : ""
-    }
+    // addressIcon(id){
+    //   return this.chosenAddressId == id ? "success" : "location-o"
+    // },
+    // addressColor(id){
+    //   return this.chosenAddressId == id ? "red" : ""
+    // }
   },
   computed:{
+    // 收藏商品信息
     starIcon(){
       return this.isCollect ? "star": "star-o"
     },
@@ -179,11 +189,14 @@ export default {
     }
   },
   mounted(){
+    // 获取商品id
     this.goodsId = this.$route.query.id
+    // 查询商品具体信息
     this.getRequest("/goods/queryGood", {id: this.goodsId}, (data)=>{
       this.item = data
       this.loadfinished = true
     })
+    // 查询商品是否被收藏
     this.getRequest(
       "/collection/isExist",
       {userId: this.$store.state.user.userId, goodsId: this.goodsId},
@@ -191,14 +204,15 @@ export default {
         this.isCollect = (data==null)?false:true;
         if(this.isCollect)this.collectionId=data.id;
     })
-    this.getRequest(
-      "/address/all",
-      {userId: this.$store.state.user.userId},
-      (data)=>{
-        this.addressList = addressTools.dbAddress_to_vantAddress(data)
-        this.addressList.map(val=>{val.isDefault?(this.chosenAddressId=val.id):''})
-      }
-    )
+    // 查询地址列表
+    // this.getRequest(
+    //   "/address/all",
+    //   {userId: this.$store.state.user.userId},
+    //   (data)=>{
+    //     this.addressList = addressTools.dbAddress_to_vantAddress(data)
+    //     this.addressList.map(val=>{val.isDefault?(this.chosenAddressId=val.id):''})
+    //   }
+    // )
   }
 }
 </script>

@@ -10,7 +10,7 @@
     <!-- 商品列表   -->
     <GoodList :tabIndex="tabIndex" ref="goodlist"></GoodList>
     <!--    返回顶部-->
-    <BackTop></BackTop>
+    <BackTop ref="gotop"></BackTop>
     <!-- 底部 -->
     <TabBar></TabBar>
   </div>
@@ -46,8 +46,8 @@ export default {
     getTabIndex(index){
       this.tabIndex = index
       this.$refs.goodlist.changeTab()
+      this.$refs.gotop.goTop()
     },
-    
   }
 
 }

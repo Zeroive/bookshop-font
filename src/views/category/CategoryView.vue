@@ -12,6 +12,7 @@
 
       <!--  商品列表    -->
       <div class="goods-list">
+        <!-- for循环渲染商品卡片 -->
         <van-card
             v-for="(item,index) in goodsByCategory" :key="index"
             :price="item.price.toFixed(2)"
@@ -42,12 +43,13 @@ export default {
   },
   data(){
     return{
-      active: 0,
-      categories: [],
-      goodsByCategory: []
+      active: 0, //当期选择的类别
+      categories: [], //所有商品类别
+      goodsByCategory: [] //当前类别的商品列表
     }
   },
   methods:{
+    // 去商品详情页
     goDetail(id){
       this.$router.push({
         path:'/detail',
@@ -56,6 +58,7 @@ export default {
         }
       })
     },
+    // 添加购物车
     handlerAddCart(){
       this.$store.dispatch('updateCarCount')
       this.$toast.success("添加成功")
@@ -74,6 +77,7 @@ export default {
         console.log(error);
       })
     },
+    // 改变侧标签栏
     onChangeSideBar(){
       this.getRequest(
         "/goods/queryGoodsByCategory",
@@ -83,6 +87,7 @@ export default {
     }
   },
   mounted(){
+    // 请求商品类别
     this.getRequest(
       "/category/all",
       {},

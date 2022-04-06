@@ -47,10 +47,11 @@ export default {
   },
   data(){
     return{
-      goodlist: []
+      goodlist: [] //商品列表
     }
   },
   methods:{
+    // 前往商品详情页
     goDetail(id){
       // console.log(id);
       this.$router.push({
@@ -62,6 +63,7 @@ export default {
     }
   },
   mounted(){
+    // 请求收藏的商品
     request({
       url: "/collection/all",
       method: "post",

@@ -16,7 +16,7 @@ export default {
     handleScroll(){
       /*获取滚动条的位置*/
       this.scrollTop = window.pageYOffset||document.documentElement.scrollTop||document.body.scrollTop;
-      if(this.scrollTop>45){
+      if(this.scrollTop>70){
         this.goTopShow = true
       }else{
         this.goTopShow = false
