@@ -39,7 +39,8 @@ export default {
       finished: false,
       pageNum: 1,
       pageSize: 10,
-      goodlist : []
+      goodlist : [],
+      totalPage: 0
     }
   },
   components:{
@@ -58,7 +59,7 @@ export default {
         }
       })
     },
-    getGoodList(){
+    getGoodList(flag=false){
       request({
         url:"/goods/page",
         method:"get",
@@ -68,14 +69,26 @@ export default {
         }
       }).then(res=>{
         if(res != null && res.records != null){
-          this.goodlist = [...this.goodlist, ...res.records.map(val=>{return{
-            "id":val.id,
-            "number":val.number,
-            "title":val.name,
-            "price":val.price,
-            "tags":[],
-            "thumb":val.imgUrl
-          }})]
+          // 根据flag判断是否切换Tab，true时候直接替换，false拼接
+          if(flag)
+            this.goodlist = res.records.map(val=>{return{
+              "id":val.id,
+              "number":val.number,
+              "title":val.name,
+              "price":val.price,
+              "tags":[],
+              "thumb":val.imgUrl
+            }})
+          else
+            this.goodlist = [...this.goodlist, ...res.records.map(val=>{return{
+              "id":val.id,
+              "number":val.number,
+              "title":val.name,
+              "price":val.price,
+              "tags":[],
+              "thumb":val.imgUrl
+            }})]
+          this.totalPage = res.total
           this.loadfinished = true
           this.loading = false
           if(this.pageNum*this.pageSize >= res.total){
@@ -87,6 +100,10 @@ export default {
         this.loading = false
         this.finished = true
       })
+    },
+    changeTab(){
+      this.pageNum = Math.round(Math.random()*(this.totalPage/this.pageSize))
+      this.getGoodList(true)
     }
     
   },

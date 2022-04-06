@@ -2,7 +2,7 @@
   <Navbar>我的订单</Navbar>
   <div class="good-list">
     <van-swipe-cell>
-        <van-card centered v-for="item in goodlist" :key="item.id">
+        <van-card centered v-for="item in goodlist" :key="item.id" @click="goDetail(item.goodsId)">
           <template #thumb>
             <img :src="item.thumb" alt="">
           </template>
@@ -10,8 +10,8 @@
             <div class="Mtitle">{{item.title}}</div>
           </template>
           <template #footer>
-            <van-button round plain hairline type="primary" size="mini">删除订单</van-button>
-            <van-button round plain hairline type="primary" size="mini">再次购买</van-button>
+            <van-button round plain hairline type="primary" size="mini" @click="handleDeleteOrder(item.id)">删除订单</van-button>
+            <van-button round plain hairline type="primary" size="mini" @click="handleAddOrder(item)">再次购买</van-button>
           </template>
           <template #num>
             <small>￥</small>
@@ -43,23 +43,68 @@ export default {
       goodlist: []
     }
   },
+  methods:{
+    // 再次购买
+    handleAddOrder(item){
+      this.$router.push({path:"/submitorder", query:{goodsId:item.goodsId, number:item.number}})
+    },
+    handleDeleteOrder(id){
+      console.log(id);
+      request({
+      url: "/order/cancel",
+      method: "post",
+      data:{
+        userId: this.$store.state.user.userId,
+        id: id
+      }}).then(res=>{
+        this.goodlist = res.data.filter(val =>
+          val.status == 1
+        ).map(val=>{
+            return{
+              "id":val.goodsId,
+              "number":val.number,
+              "title":val.name,
+              "totalPrice":val.totalPrice,
+              "thumb":val.imgUrl,
+              "goodsId": val.goodsId,
+              "status": val.status
+            }
+        })
+        this.$toast.fail("删除成功")
+      }).catch(error=>{
+        console.log(error);
+      })
+    },
+    goDetail(id){
+      this.$router.push({
+        path:'/detail',
+        query:{
+          id:id
+        }
+      })
+    },
+  },
   mounted(){
     request({
       url: "/order/all",
       method: "post",
       data:{
         userId: this.$store.state.user.userId
-      }
+      } 
     }).then(res=>{
-      this.goodlist = res.data.map(val=>{return{
-        "id":val.goodsId,
-        "number":val.number,
-        "title":val.name,
-        "totalPrice":val.totalPrice,
-        "thumb":val.imgUrl,
-        "goodsId": val.goodsId,
-        "status": val.status
-      }})
+      this.goodlist = res.data.filter(val =>
+        val.status == 1
+      ).map(val=>{
+          return{
+            "id":val.id,
+            "number":val.number,
+            "title":val.name,
+            "totalPrice":val.totalPrice,
+            "thumb":val.imgUrl,
+            "goodsId": val.goodsId,
+            "status": val.status
+          }
+      })
     }).catch(error=>{
       console.log(error);
     })

@@ -2,39 +2,25 @@
   <div>
     <navbar-component>商品分类</navbar-component>
     <div id="main-box">
-      <!--     tab选择卡-->
-      <div class="order-tab">
-        <van-tabs v-model:active="activeTab" class="tab-bar">
-          <van-tab title="按价格排序"></van-tab>
-          <van-tab title="按综合排序"></van-tab>
-          <van-tab title="按销量排序"></van-tab>
-        </van-tabs>
-      </div>
+
       <!--   侧边框   -->
       <div class="left-menu">
-        <van-sidebar v-model="active" class="sidebar">
-          <van-sidebar-item title="前端"  />
-          <van-sidebar-item title="后端" />
-          <van-sidebar-item title="软件工程" />
+        <van-sidebar v-model="active" class="sidebar"  @change="onChangeSideBar">
+          <van-sidebar-item v-for="(item, index) in categories" :key="index" :title="item.name"  />
         </van-sidebar>
       </div>
+
       <!--  商品列表    -->
       <div class="goods-list">
         <van-card
-            v-for="index in 4" :key="index"
-            num="20"
-            price="32.00"
-            desc="这里是商品的描述信息"
-            title="细说PHP"
-            thumb="https://img.yzcdn.cn/vant/ipad.jpeg"
-            @click="goDetail(1)"
+            v-for="(item,index) in goodsByCategory" :key="index"
+            :price="item.price.toFixed(2)"
+            :title="item.name"
+            :thumb="item.imgUrl"
+            @click="goDetail(item.id)"
         >
           <template #tags>
             <van-tag plain type="danger">新品</van-tag>
-          </template>
-          <template #footer>
-            <van-button size="mini" color="#ffBc00" @click.stop="handlerAddCart">加入购物车</van-button>
-            <van-button size="mini" color="#ff0000">购买</van-button>
           </template>
         </van-card>
       </div>
@@ -46,6 +32,7 @@
 <script>
 import NavbarComponent from "@/components/navbar/NavbarComponent";
 import TabBar from "@/components/common/TabBar.vue"
+import request from '@/network/request'
 
 export default {
   name: "CategoryView",
@@ -55,8 +42,9 @@ export default {
   },
   data(){
     return{
-      active:0,
-      activeTab:0
+      active: 0,
+      categories: [],
+      goodsByCategory: []
     }
   },
   methods:{
@@ -71,7 +59,38 @@ export default {
     handlerAddCart(){
       this.$store.dispatch('updateCarCount')
       this.$toast.success("添加成功")
+    },
+    // 获取请求
+    getRequest(url, data, func=null){
+      request({
+        url: url,
+        method: "post",
+        data: data
+      }).then(res=>{
+        if(res != null && res.code == 200){
+          func(res.data)
+        }
+      }).catch(error=>{
+        console.log(error);
+      })
+    },
+    onChangeSideBar(){
+      this.getRequest(
+        "/goods/queryGoodsByCategory",
+        {id: this.categories[this.active].id},
+        (data)=>{this.goodsByCategory = data;}
+      )
     }
+  },
+  mounted(){
+    this.getRequest(
+      "/category/all",
+      {},
+      (data)=>{
+        this.categories = data
+        this.onChangeSideBar()
+      }
+    )
   }
 }
 </script>
@@ -98,7 +117,6 @@ export default {
     position: fixed;
     left: 0px;
     width: 80px;
-    top: 95px;
     .sidebar{
       width: 100%;
     }
@@ -107,7 +125,6 @@ export default {
   .goods-list{
     flex: 1;
     position: absolute;
-    top: 100px;
     left: 80px;
     right: 0px;
     height: 100vh;

@@ -90,9 +90,11 @@ export default {
           icon_size: 28,
         },
         {
-          icon_name:"comment-o",
-          icon_msg:"待评价",
+          icon_name:"star",
+          icon_msg:"收藏",
           icon_size: 28,
+          icon_color:"rgb(255, 255, 50)",
+          path: "/collection"
         },
         {
           icon_name: "orders-o",

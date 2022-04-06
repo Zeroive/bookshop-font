@@ -8,7 +8,7 @@
     <!--  选择栏  -->
     <TabControl :titles="titles" @tabClick="getTabIndex"></TabControl>
     <!-- 商品列表   -->
-    <GoodList :tabIndex="tabIndex"></GoodList>
+    <GoodList :tabIndex="tabIndex" ref="goodlist"></GoodList>
     <!--    返回顶部-->
     <BackTop></BackTop>
     <!-- 底部 -->
@@ -29,8 +29,8 @@ export default {
   name:'HomeView',
   data(){
     return{
-      titles:['畅销','精选','新书'],
-      tabIndex:0
+      titles: ['畅销','精选','新书'],
+      tabIndex: 0
     }
   },
   components:{
@@ -45,6 +45,7 @@ export default {
   methods:{
     getTabIndex(index){
       this.tabIndex = index
+      this.$refs.goodlist.changeTab()
     },
     
   }

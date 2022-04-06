@@ -5,7 +5,7 @@
     <van-swipe-cell centered v-for="item in goodlist" :key="item.id">
       <van-divider/>
 
-      <van-card>
+      <van-card  @click="goDetail(item.goodsId)">
         <template #thumb>
           <img :src="item.thumb" alt="">
         </template>
@@ -50,6 +50,17 @@ export default {
       goodlist: []
     }
   },
+  methods:{
+    goDetail(id){
+      // console.log(id);
+      this.$router.push({
+        path:'/detail',
+        query:{
+          id:id
+        }
+      })
+    }
+  },
   mounted(){
     request({
       url: "/collection/all",
@@ -59,7 +70,7 @@ export default {
       }
     }).then(res=>{
       this.goodlist = res.data.map(val=>{return{
-        "id":val.goodsId,
+        "id":val.id,
         "number":val.number,
         "title":val.name,
         "totalPrice":val.price,

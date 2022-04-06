@@ -5,6 +5,7 @@
 
     <van-skeleton class="Mskeleton"  v-show="!loadfinished" title :row="9" />
     <div v-show="loadfinished">
+      
       <img :src="item.imgUrl" alt="">
       <van-card class="Mcard">
         <template #price>
@@ -140,7 +141,7 @@ export default {
     // 立即购买
     handleAddOrder(){
       this.isAddOrderPopup = false
-      this.$router.push({path:"/submitorder", query:{goodsId:this.goodsId}})
+      this.$router.push({path:"/submitorder", query:{goodsId:this.goodsId, number:this.number}})
     },
     // 获取请求
     getRequest(url, data, func=null){

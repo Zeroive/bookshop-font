@@ -28,7 +28,7 @@ function dbAddress_to_vantAddress(item){
     'id':val.id,
     'name':val.receiver,
     'tel':val.phone,
-    'address':areaCode_to_address(val.postcode)+val.address,
+    'address':areaCode_to_address(val.addressCode)+val.address,
     'addressDetail':val.address,
     'areaCode':val.addressCode.toString(),
     'postalCode':val.postcode,
@@ -42,8 +42,7 @@ function areaCode_to_address(code){
   const province = areaList["province_list"][(parseInt(code/10000)*10000).toString()]
   const city = areaList["city_list"][(parseInt(code/100)*100).toString()]
   const county = areaList["county_list"][code.toString()]
-  // console.log(province==null?"":province + city==null?"":city + county==null?"":county);
-  return province==null?"":province + city==null?"":city + county==null?"":county
+  return (province==null?"":province) + (city==null?"":city) + (county==null?"":county)
 }
 
 export default{vantAddress_to_dbAddress, dbAddress_to_vantAddress, areaCode_to_address}
