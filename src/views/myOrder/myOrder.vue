@@ -2,7 +2,7 @@
   <Navbar>我的订单</Navbar>
   <div class="good-list">
     <van-swipe-cell>
-        <van-card centered v-for="item in goodlist" :key="item.id" @click="goDetail(item.goodsId)">
+        <van-card centered v-for="(item, index) in goodlist" :key="index" @click="goDetail(item.goodsId)">
           <template #thumb>
             <img :src="item.thumb" alt="">
           </template>
@@ -10,8 +10,8 @@
             <div class="Mtitle">{{item.title}}</div>
           </template>
           <template #footer>
-            <van-button round plain hairline type="primary" size="mini" @click="handleDeleteOrder(item.id)">删除订单</van-button>
-            <van-button round plain hairline type="primary" size="mini" @click="handleAddOrder(item)">再次购买</van-button>
+            <van-button round plain hairline type="primary" size="mini" @click.stop="handleDeleteOrder(item.id)">删除订单</van-button>
+            <van-button round plain hairline type="primary" size="mini" @click.stop="handleAddOrder(item)">再次购买</van-button>
           </template>
           <template #num>
             <small>￥</small>
@@ -49,7 +49,6 @@ export default {
       this.$router.push({path:"/submitorder", query:{goodsId:item.goodsId, number:item.number}})
     },
     handleDeleteOrder(id){
-      console.log(id);
       request({
       url: "/order/cancel",
       method: "post",

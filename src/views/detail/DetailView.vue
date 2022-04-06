@@ -188,7 +188,7 @@ export default {
       "/collection/isExist",
       {userId: this.$store.state.user.userId, goodsId: this.goodsId},
       (data)=>{
-        this.isCollect = data==null?false:true;
+        this.isCollect = (data==null)?false:true;
         if(this.isCollect)this.collectionId=data.id;
     })
     this.getRequest(

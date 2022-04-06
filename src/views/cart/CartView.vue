@@ -125,13 +125,14 @@ export default {
               "totalPrice": item.number*item.price,
               "status": 1
             })
+            this.deleteGood(item.id)
           }
         }
       }
       else{
-        for(let i = this.goodlist.length-1; i >= 0; i--){
-          if(this.goodlist[i].checked){
-            this.deleteGood(this.goodlist[i].id)
+        for(let item of this.goodlist){
+          if(item.checked){
+            this.deleteGood(item.id)
           }
       }
       }
@@ -169,6 +170,7 @@ export default {
       this.getRequest("/order/buy", data, ()=>{
         this.$toast.success("下单成功!")
       })
+
     },
     getRequest(url, data, func=null){
       request({
@@ -182,6 +184,7 @@ export default {
         }
       }).catch(error=>{
         console.log(error);
+        this.$toast.fail("操作失败")
       })
     }
   },

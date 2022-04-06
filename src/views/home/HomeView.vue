@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <navbar-component>机锋程序员</navbar-component>
+    <navbar-component>BOOKSTORE</navbar-component>
     <!--  轮播图 -->
     <HomeSwipe></HomeSwipe>
     <!--    推荐商品 -->

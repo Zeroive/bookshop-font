@@ -147,7 +147,7 @@ export default {
           "totalPrice": this.number*this.item.price,
           "status": 1
         },
-        ()=>{this.$toast.success("下单成功!")}
+        ()=>{this.$toast.success("下单成功!");this.$router.push("/home");}
       )
     }
   },
