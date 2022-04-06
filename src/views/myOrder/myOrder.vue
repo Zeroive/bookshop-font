@@ -5,7 +5,7 @@
   <div class="good-list">
     <van-swipe-cell>
       <!-- 商品卡片 -->
-        <van-card centered v-for="(item, index) in goodlist" :key="index" @click="goDetail(item.goodsId)">
+        <van-card centered v-for="(item, index) in goodlist" :key="index" @click="goDetail(item.id)">
           <!-- 商品图片，绑定参数传过来的地址 -->
           <template #thumb>
             <img :src="item.thumb" alt="">
@@ -86,7 +86,7 @@ export default {
     // 前往商品详情页
     goDetail(id){
       this.$router.push({
-        path:'/detail',
+        path:'/orderdetail',
         query:{
           id:id
         }

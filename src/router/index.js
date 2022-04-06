@@ -99,6 +99,15 @@ const routes = [
       title:'提交订单',
       identities:['user']
     }
+  },
+  {
+    path:'/orderdetail',
+    name:'orderdetail',
+    component:()=>import('../views/myOrder/orderDetail.vue'),
+    meta:{
+      title:'订单详情',
+      identities:['user']
+    }
   }
 ]
 

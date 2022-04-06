@@ -236,6 +236,7 @@ export default {
       "/shoppingCart/all", 
       {userId: this.$store.state.user.userId}, 
       data=>{
+        console.log(data);
         this.$store.state.cart.count = data.length
         this.goodlist = data.map(val=>{return{
           "id":val.id,
