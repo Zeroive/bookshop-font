@@ -36,13 +36,13 @@
         </van-row>
       </div>
 
-      <div id="others">
+      <!-- <div id="others">
         <van-row justify="space-around">
           <Icon v-for="(item,index) in service_icons"
             :icon="item" :key="index"
           />
         </van-row>
-      </div>
+      </div> -->
 
       <van-row justify="end">
         <div class="change">
@@ -85,9 +85,11 @@ export default {
           icon_size: 28,
         },
         {
-          icon_name:"refund-o",
-          icon_msg:"退款/售后",
+          icon_name:"location",
+          icon_msg:"我的地址",
           icon_size: 28,
+          icon_color:"green",
+          path: "/address"
         },
         {
           icon_name:"star",

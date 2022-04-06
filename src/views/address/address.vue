@@ -1,10 +1,12 @@
 <template>
+  <!-- 头部 -->
   <Navbar>
     <template #default>
       地址管理
     </template>
   </Navbar>
 
+  <!-- 地址列表 -->
   <van-address-list
     v-model="chosenAddressId"
     :list="addressList"
@@ -14,21 +16,24 @@
     @add="onAdd"
     @edit="onEdit"
   />
-  <van-popup v-model:show="isPopShow" round :close-on-click-overlay="false" :closeable="true" style="width: 80%">
+
+  <!-- 添加地址弹出窗口 -->
+  <van-popup v-model:show="isPopShow" @close="closePop" round :close-on-click-overlay="false" :closeable="true" style="width: 80%">
     <van-address-edit
       ref="addressEdit"
       :address-info="popupAddress"
       :area-list="areaList"
       show-postal
       show-delete
+      :delete-button-text="deleteButtonText"
       show-set-default
       :area-columns-placeholder="['请选择', '请选择', '请选择']"
       @save="onSave"
       @delete="onDelete"
-      @close="closePop"
     />
   </van-popup>
-  
+
+  <van-button @click="confirmAddress" class="confirmAddress" color="linear-gradient(to right, #ff6034, #ee0a24)" round>完成</van-button>
 
 </template>
 
@@ -41,70 +46,79 @@ import addressTools from "@/utils/addressTools"
 export default {
   data(){
     return {
-      chosenAddressId: 0,
-      addressList:[],
-      disabledList:[],
-      isPopShow:false,
-      areaList: [],
-      popupAddress: {}
+      chosenAddressId: -1, //当前选择的地址Id
+      addressList:[], //地址列表
+      disabledList:[], //不可送达地址列表
+      isPopShow:false, //是否弹出
+      areaList: [], //地址列表
+      popupAddress: {}, //弹出框的信息
+      isAddAddress: false, //是否是添加地址
+      deleteButtonText: "删除" //弹出框按钮文案
     }
   },
   components:{
     Navbar
   },
   methods:{
+    // 添加地址
     onAdd(){
+      this.deleteButtonText = "取消"
+      this.isAddAddress = true
       this.isPopShow = true
     },
+    // 保存地址、修改地址
     onSave(item){
       this.isPopShow = false
       let url = ""
       let data = {}
-      if(this.popupAddress=={}){
-        url = "/address/update"
+      // 根据isAddAddress来判断是添加还是更新
+      if(this.isAddAddress){
+        this.deleteButtonText = "删除"
+        url = "/address/add"
         data = addressTools.vantAddress_to_dbAddress(-1, this.$store.state.user.userId, item)
       }else{
-        url = "/address/add"
+        this.deleteButtonText = "取消"
+        url = "/address/update"
         data = addressTools.vantAddress_to_dbAddress(this.popupAddress.id, this.$store.state.user.userId, item)
       }
-      request({
-        url: url,
-        method: "post",
-        data: data
-      }).then(res=>{
-        if(res.code == 200){
+      // 发送请求
+      this.getRequest(
+        url,
+        data,
+        (data)=>{
           this.$toast.success("保存成功")
-          this.addressList = addressTools.dbAddress_to_vantAddress(res.data)
+          this.addressList = addressTools.dbAddress_to_vantAddress(data)
         }
-      }).catch(err =>{
-        this.$toast.success(err)
-      })
-
+      )
     },
+    // 删除地址
     onDelete(){
       this.isPopShow = false
-      request({
-        url: "/address/delete",
-        method: "post",
-        data: {
-          'id': this.popupAddress.id,
-          'userId': this.$store.state.user.userId
-        }
-      }).then(res=>{
-        if(res.code == 200){
-          this.$toast.success("删除成功")
-          this.addressList = addressTools.dbAddress_to_vantAddress(res.data)
-        }
-      }).catch(err =>{
-        this.$toast.success(err)
-      })
+      // 根据isAddAddress判断是添加还是修改
+      if(!this.isAddAddress){
+        this.getRequest(
+          "/address/delete",
+          {
+            'id': this.popupAddress.id,
+            'userId': this.$store.state.user.userId
+          },
+          (data)=>{
+            this.$toast.success("删除成功")
+            this.addressList = addressTools.dbAddress_to_vantAddress(data)
+          }
+        )
+      }
+      this.popupAddress = {}
     },
+    // 修改地址
     onEdit(item, index){
-      this.isPopShow = true
       this.popupAddress = this.addressList[index]
+      this.isPopShow = true
     },
+    // 关闭弹出框
     closePop(){
       this.popupAddress = {}
+      this.isAddAddress = false
     },
     // 获取请求
     getRequest(url, data, func=null){
@@ -119,6 +133,10 @@ export default {
       }).catch(error=>{
         console.log(error);
       })
+    },
+    confirmAddress(){
+      this.$router.go(-1)
+      localStorage.setItem('chosenAddressId', this.chosenAddressId)
     }
   },
   computed:{
@@ -134,17 +152,12 @@ export default {
   },
   mounted(){
     this.areaList = areaList
-    request({
-      url:"/address/all",
-      method:"post",
-      data:{
-        userId: this.$store.state.user.userId
-      }
-    }).then(res=>{
-      this.addressList = addressTools.dbAddress_to_vantAddress(res.data)
-    }).catch(error=>{
-      console.log(error);
-    })
+    // 初始化列表
+    this.getRequest(
+      "/address/all",
+      {userId: this.$store.state.user.userId},
+      (data)=>{this.addressList = addressTools.dbAddress_to_vantAddress(data)}
+    )
   }
 }
 </script>
@@ -152,5 +165,11 @@ export default {
 <style lang="scss" scoped>
 .van-address-list{
   margin-top: 50px;
+}
+.confirmAddress{
+  position: fixed;
+  transform: translate(-50%);
+  bottom: 50px;
+  width: 90%;
 }
 </style>

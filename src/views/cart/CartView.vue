@@ -232,12 +232,16 @@ export default {
         }
       })
     })
+    const chooseAddressId = localStorage.getItem('chosenAddressId')
     this.getRequest("/address/all", {userId: this.$store.state.user.userId}, data=>{
-      this.addressList = addressTools.dbAddress_to_vantAddress(data).map(val=>{
+      this.addressList = addressTools.dbAddress_to_vantAddress(data).map((val, index)=>{
+        if(chooseAddressId == -1 && val.isDefault == true)this.current_address_index = index
+        else if(chooseAddressId == val.id)this.current_address_index = index
         val["label"] = addressTools.areaCode_to_address(val.areaCode)
         return val
       })
     })
+    localStorage.setItem('chosenAddressId', -1)
   }
 }
 </script>

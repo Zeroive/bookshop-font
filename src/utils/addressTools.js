@@ -1,6 +1,8 @@
 import areaList from "@/assets/data/areaList.json"
 
+// 从vant需要的数据格式转换成数据库db需要的数据格式
 function vantAddress_to_dbAddress(addressId, userId, item){
+  // 更新需要addressId, 否则address设置为-1
   return addressId==-1?
   {
     "userId": userId,
@@ -22,7 +24,7 @@ function vantAddress_to_dbAddress(addressId, userId, item){
   }
 }
 
-
+// 和上面相反
 function dbAddress_to_vantAddress(item){
   return item.map(val=>{return{
     'id':val.id,
@@ -36,6 +38,7 @@ function dbAddress_to_vantAddress(item){
   }})
 }
 
+// 从地址编码 装换为 具体的地址
 function areaCode_to_address(code){
   if(typeof(code) == "string")
     code = parseInt(code)

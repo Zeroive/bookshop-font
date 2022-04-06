@@ -176,17 +176,17 @@ export default {
       this.item = data
       this.loadfinished = true
     })
-    this.getRequest(
-      "/address/all",
-      {userId: this.$store.state.user.userId},
-      (data)=>{
-        this.addressList = addressTools.dbAddress_to_vantAddress(data)
-        this.addressList.map(val=>{
-          val.isDefault?(this.chosenAddressId=val.id):''
-          val["label"] = addressTools.areaCode_to_address(val.areaCode)
-        })
-      }
-    )
+    const chooseAddressId = localStorage.getItem('chosenAddressId')
+    this.getRequest("/address/all", {userId: this.$store.state.user.userId}, data=>{
+      this.addressList = addressTools.dbAddress_to_vantAddress(data).map((val)=>{
+        if(chooseAddressId == -1 && val.isDefault == true){this.chosenAddressId = val.id}
+        else if(chooseAddressId == val.id){this.chosenAddressId = val.id}
+        val["label"] = addressTools.areaCode_to_address(val.areaCode)
+        return val
+      })
+      console.log(this.chosenAddressId);
+    })
+    localStorage.setItem('chosenAddressId', -1)
   }
 
 }
