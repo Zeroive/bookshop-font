@@ -256,9 +256,6 @@ export default {
   margin-top: 45px;
   margin-bottom: 120px;
 
-  .van-swipe-cell{
-
-  }
 
   .Mtitle{
     width: 150px;
