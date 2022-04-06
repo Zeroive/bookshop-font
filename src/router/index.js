@@ -108,6 +108,15 @@ const routes = [
       title:'订单详情',
       identities:['user']
     }
+  },
+  {
+    path:'/paysuccess',
+    name:'paysuccess',
+    component:()=>import('../views/submitOrder/paySuccess.vue'),
+    meta:{
+      title:'支付成功',
+      identities:['user']
+    }
   }
 ]
 

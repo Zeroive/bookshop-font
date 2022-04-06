@@ -73,11 +73,9 @@ export default {
       let data = {}
       // 根据isAddAddress来判断是添加还是更新
       if(this.isAddAddress){
-        this.deleteButtonText = "取消"
         url = "/address/add"
         data = addressTools.vantAddress_to_dbAddress(-1, this.$store.state.user.userId, item)
       }else{
-        this.deleteButtonText = "删除"
         url = "/address/update"
         data = addressTools.vantAddress_to_dbAddress(this.popupAddress.id, this.$store.state.user.userId, item)
       }
@@ -112,6 +110,8 @@ export default {
     },
     // 修改地址
     onEdit(item, index){
+      this.isAddAddress = false
+      this.deleteButtonText = "删除"
       this.popupAddress = this.addressList[index]
       this.isPopShow = true
     },
