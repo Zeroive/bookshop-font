@@ -28,7 +28,7 @@ function dbAddress_to_vantAddress(item){
     'id':val.id,
     'name':val.receiver,
     'tel':val.phone,
-    'address':val.address,
+    'address':areaCode_to_address(val.postcode)+val.address,
     'addressDetail':val.address,
     'areaCode':val.addressCode.toString(),
     'postalCode':val.postcode,

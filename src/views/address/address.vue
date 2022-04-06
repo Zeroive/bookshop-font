@@ -105,6 +105,20 @@ export default {
     },
     closePop(){
       this.popupAddress = {}
+    },
+    // 获取请求
+    getRequest(url, data, func=null){
+      request({
+        url: url,
+        method: "post",
+        data: data
+      }).then(res=>{
+        if(res != null && res.code == 200){
+          func(res.data)
+        }
+      }).catch(error=>{
+        console.log(error);
+      })
     }
   },
   computed:{

@@ -36,7 +36,7 @@
       <van-dialog v-model:show="isAddOrderPopup" show-cancel-button>
         <template #title>
           <div class="popTitle">
-            {{tiem.title}}
+            {{item.title}}
           </div>
           <div class="popPrice">
             <small>￥</small>
@@ -46,20 +46,25 @@
           </div>
         </template>
 
-        <van-collapse v-model="activeNames">
-          <van-collapse-item name="1">
-            <template #title>
-              <div>标题1 <van-icon name="question-o" /></div>
-            </template>
-            代码是写出来给人看的，附带能在机器上运行。
-          </van-collapse-item>
-          <van-collapse-item title="标题2" name="2" icon="shop-o">
-            技术无非就是那些开发它的人的共同灵魂。
-          </van-collapse-item>
-        </van-collapse>
-
-
-
+        <template #default>
+          <van-collapse v-model="activeCollapse">
+            <van-collapse-item name="1">
+              <template #title>
+                {{chosenAddress}}
+              </template>
+              <van-cell-group>
+                <van-cell v-for="(item, index) in addressList" :key="index" is-link>
+                  <template #title>
+                    {{item.address}}
+                  </template>
+                  <template #right-icon>
+                    <van-icon :name="addressIcon(item.id)" :color="addressColor(item.id)" size="20px"></van-icon>
+                  </template>
+                </van-cell>
+              </van-cell-group>
+            </van-collapse-item>
+          </van-collapse>
+        </template>
       </van-dialog>
 
 
@@ -73,6 +78,7 @@
 import NavbarComponent from "@/components/navbar/NavbarComponent";
 import TabBar from "@/components/common/TabBar.vue"
 import request from '@/network/request'
+import addressTools from "@/utils/addressTools"
 
 export default {
   name: "DetailView",
@@ -88,8 +94,10 @@ export default {
       isCollect: true,
       goodsId: 0,
       collectionId: 0,
-      addressList: [],
-      isAddOrderPopup: false
+      addressList: [], //地址列表
+      chosenAddressId: 0, //当前选择的地址
+      isAddOrderPopup: false,
+      activeCollapse: []
     }
   },
   methods:{
@@ -131,7 +139,8 @@ export default {
     },
     // 立即购买
     handleAddOrder(){
-      this.isAddOrderPopup = true
+      this.isAddOrderPopup = false
+      this.$router.push({path:"/submitorder", query:{goodsId:this.goodsId}})
     },
     // 获取请求
     getRequest(url, data, func=null){
@@ -149,12 +158,23 @@ export default {
     },
     handleInfo(str){
       // 处理字符串 。后面加 \n
-      return str.split('').map((val, index)=>{return val=='。'&&str.charAt(index+1)!='\n'?'。\n':val}).join('')
+      if(str != null)
+        return str.split('').map((val, index)=>{return val=='。'&&str.charAt(index+1)!='\n'?'。\n':val}).join('')
+      return ''
+    },
+    addressIcon(id){
+      return this.chosenAddressId == id ? "success" : "location-o"
+    },
+    addressColor(id){
+      return this.chosenAddressId == id ? "red" : ""
     }
   },
   computed:{
     starIcon(){
       return this.isCollect ? "star": "star-o"
+    },
+    chosenAddress(){
+
     }
   },
   mounted(){
@@ -170,11 +190,27 @@ export default {
         this.isCollect = data==null?false:true;
         if(this.isCollect)this.collectionId=data.id;
     })
+    this.getRequest(
+      "/address/all",
+      {userId: this.$store.state.user.userId},
+      (data)=>{
+        this.addressList = addressTools.dbAddress_to_vantAddress(data)
+        this.addressList.map(val=>{val.isDefault?(this.chosenAddressId=val.id):''})
+      }
+    )
   }
 }
 </script>
 
 <style scoped lang="scss">
+
+pre {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  text-align: left;
+  margin: 0 15px;
+  text-indent:2em;
+}
 
 .Mskeleton{
   margin-top: 60px;
@@ -218,8 +254,8 @@ img{
 }
 
 .popPrice{
-  color: red;
   .Mprice{
+    color: red;
     font-weight: bold;
     text-align: right;
   }

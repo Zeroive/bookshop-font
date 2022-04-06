@@ -90,6 +90,15 @@ const routes = [
       title:'我的收藏',
       identities:['user']
     }
+  },
+  {
+    path:'/submitorder',
+    name:'submitorder',
+    component:()=>import('../views/submitOrder/submitOrder.vue'),
+    meta:{
+      title:'提交订单',
+      identities:['user']
+    }
   }
 ]
 

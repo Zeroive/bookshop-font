@@ -137,7 +137,10 @@ export default {
       }
     },
     deleteGood(id){
-      this.getRequest("/shoppingCart/delete", {id: id, userId:this.$store.state.user.userId}, (data)=>{
+      this.getRequest(
+        "/shoppingCart/delete", 
+        {id: id, userId:this.$store.state.user.userId}, 
+        (data)=>{
         this.$store.state.cart.count = data.length
         this.goodlist = data.map(val=>{return{
           "id":val.id,
@@ -209,18 +212,22 @@ export default {
     }
   },
   mounted(){
-    this.getRequest("/shoppingCart/all", {userId: this.$store.state.user.userId}, data=>{
-      this.$store.state.cart.count = data.length
-      this.goodlist = data.map(val=>{return{
-        "id":val.id,
-        "number":val.number,
-        "title":val.name,
-        "checked":false,
-        "price":val.price,
-        "tags":[],
-        "thumb":val.imgUrl,
-        "goodsId": val.goodsId
-      }})
+    this.getRequest(
+      "/shoppingCart/all", 
+      {userId: this.$store.state.user.userId}, 
+      data=>{
+        this.$store.state.cart.count = data.length
+        this.goodlist = data.map(val=>{return{
+          "id":val.id,
+          "number":val.number,
+          "title":val.name,
+          "checked":false,
+          "price":val.price,
+          "tags":[],
+          "thumb":val.imgUrl,
+          "goodsId": val.goodsId
+        }
+      })
     })
     this.getRequest("/address/all", {userId: this.$store.state.user.userId}, data=>{
       this.addressList = addressTools.dbAddress_to_vantAddress(data).map(val=>{
