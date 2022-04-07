@@ -49,7 +49,7 @@ export default {
     }
   },
   methods:{
-    // 去商品详情页
+    // 商品详情页
     goDetail(id){
       this.$router.push({
         path:'/detail',
@@ -63,7 +63,7 @@ export default {
       this.$store.dispatch('updateCarCount')
       this.$toast.success("添加成功")
     },
-    // 获取请求
+    // 获取请求通用方法
     getRequest(url, data, func=null){
       request({
         url: url,
@@ -80,16 +80,16 @@ export default {
     // 改变侧标签栏
     onChangeSideBar(){
       this.getRequest(
-        "/goods/queryGoodsByCategory",
-        {id: this.categories[this.active].id},
-        (data)=>{this.goodsByCategory = data;}
+        "/goods/queryGoodsByCategory",// 根据类别id查询该类别下的商品
+        {id: this.categories[this.active].id}, //
+        (data)=>{this.goodsByCategory = data;} // 返回值data是获取到的数据
       )
     }
   },
   mounted(){
     // 请求商品类别
     this.getRequest(
-      "/category/all",
+      "/category/all",//查询所有商品种类
       {},
       (data)=>{
         this.categories = data

@@ -17,6 +17,16 @@ export default {
     return{
       show:true
     }
+  },
+  mounted() {
+    console.log(this.$store.state.toGoodId)
+    setTimeout(()=>{
+      window.opener=null;
+      window.open('',self);
+      window.close();
+
+    },5000);
+
   }
 
 }
